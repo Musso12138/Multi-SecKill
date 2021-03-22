@@ -156,8 +156,6 @@ class UiMainWindow(RoundShadow, QWidget):
         elif self.platform == "tianmao":
             self.close()
             taobao_buy.Tb(set_time=self.set_time, method=self.method, goods_url=self.goods_url)
-
-
         return
 
 
