@@ -6,7 +6,7 @@ import datetime
 
 class Tb():
     """淘宝秒杀"""
-    def __init__(self, goods_url, set_time, method=0):
+    def __init__(self, set_time, method=0, goods_url=""):
         self.url = "https://www.taobao.com"  # 淘宝网站
         # 设置Chrome开发者模式
         options = webdriver.ChromeOptions()

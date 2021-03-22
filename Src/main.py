@@ -5,6 +5,7 @@ import sys
 import Src.time_func as time_func
 import Src.taobao_buy as taobao_buy
 import Src.tianmao_buy as tianmao_buy
+import threading
 from Src.MyLib.RoundShadowWidget import RoundShadow
 
 
@@ -14,6 +15,7 @@ class UiMainWindow(RoundShadow, QWidget):
     def __init__(self, parent=None):
         self.platform = "taobao"
         self.method = 0
+        self.goods_url = ""
         super(UiMainWindow, self).__init__(parent)
         self.resize(1000, 700)
 
@@ -117,14 +119,14 @@ class UiMainWindow(RoundShadow, QWidget):
         # self.formLayout.setObjectName("formLayout")
 
     def platformchange(self):
-        """购物平台切换"""
+        """监测购物平台切换"""
         if self.comboBox_platform.currentText() == "淘宝":
             self.platform = "taobao"
         elif self.comboBox_platform.currentText() == "天猫":
             self.platform = "tianmao"
 
     def methodchange(self):
-        """购物模式切换"""
+        """监测购物模式切换"""
         if self.comboBox_mod.currentText() == "自动全选购物车":
             self.method = 0
             self.lineEdit.setHidden(True)
@@ -136,11 +138,11 @@ class UiMainWindow(RoundShadow, QWidget):
             self.lineEdit.setHidden(False)
 
     def datetimechange(self):
-        """秒杀时间切换"""
+        """监测设定秒杀时间切换"""
         self.set_time = self.dateTimeEdit.text()
 
     def lineEditChange(self):
-        """商品链接输入改变"""
+        """监测商品链接输入改变"""
         self.goods_url = self.lineEdit.text()
 
     def miaosha(self):
@@ -148,9 +150,13 @@ class UiMainWindow(RoundShadow, QWidget):
         print("当前模式: " + str(self.method))
         print("秒杀时间: " + self.set_time)
         if self.platform == "taobao":
-            taobao_buy.Tb(goods_url=self.goods_url, set_time=self.set_time, method=self.method)
+            # 确定平台后关闭窗口，否则占用资源且无法响应
+            self.close()
+            taobao_buy.Tb(set_time=self.set_time, method=self.method, goods_url=self.goods_url)
         elif self.platform == "tianmao":
-            taobao_buy.Tb(goods_url=self.goods_url, set_time=self.set_time, method=self.method)
+            self.close()
+            taobao_buy.Tb(set_time=self.set_time, method=self.method, goods_url=self.goods_url)
+
 
         return
 
