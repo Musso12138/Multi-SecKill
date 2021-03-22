@@ -16,54 +16,64 @@ class UiMainWindow(RoundShadow, QWidget):
         self.method = 0
         super(UiMainWindow, self).__init__(parent)
         self.resize(1000, 700)
+
         # 购物平台选择框
         self.comboBox_platform = QComboBox(self)
-        self.comboBox_platform.setGeometry(QRect(200, 390, 200, 50))
-        self.comboBox_platform.setStyleSheet("border:none")
+        self.comboBox_platform.setGeometry(QRect(200, 445, 200, 50))
+        # self.comboBox_platform.setStyleSheet("border-color: rgb(255, 255, 255);")
         self.comboBox_platform.setObjectName("comboBox")
+        self.comboBox_platform.setPlaceholderText("请选择购物平台")
         self.comboBox_platform.addItem("淘宝")
         self.comboBox_platform.addItem("天猫")
-        self.comboBox_platform.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                             "color: rgb(0, 0, 0);")
-        self.comboBox_platform.setFont(QFont("幼圆", 13))
+        # 优化ComboBox样式
+        self.comboBox_platform.setStyleSheet("border-color: rgb(0,0,0);"
+                                             "selection-background-color: rgb(178, 178, 178);"  # 选中项背景色
+                                             "selection-color: rgb(0, 0, 0);"  # 选中项文字颜色
+                                             "background: white;"  # combobox背景色
+                                             "border: 1px solid gray;"  # 边框宽度、颜色
+                                             "border-radius: 3px;")
+        self.comboBox_platform.setFont(QFont("幼圆", 12))
         self.comboBox_platform.setAttribute(Qt.WA_TranslucentBackground)
-        # self.comboBox_platform.setView("border-radius:4px;")
         self.comboBox_platform.setWindowFlags(Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         self.comboBox_platform.currentIndexChanged.connect(self.platformchange)
 
         # 购物模式选择框
         self.comboBox_mod = QComboBox(self)
-        self.comboBox_mod.setGeometry(QRect(500, 390, 300, 50))
-        self.comboBox_mod.setStyleSheet("border:none")
+        self.comboBox_mod.setGeometry(QRect(450, 445, 350, 50))
+        self.comboBox_mod.setStyleSheet("selection-background-color: rgb(178, 178, 178);"  # 选中项背景色
+                                        "selection-color: rgb(0, 0, 0);"  # 选中项文字颜色
+                                        "background: white;"  # combobox背景色
+                                        "border: 1px solid gray;"  # 边框宽度、颜色
+                                        "border-radius: 3px;")
         self.comboBox_mod.setObjectName("comboBox")
+        self.comboBox_mod.setPlaceholderText("请选择秒杀模式")
         self.comboBox_mod.addItem("自动全选购物车")
         self.comboBox_mod.addItem("手动选择商品")
         self.comboBox_mod.addItem("手动输入商品链接")
-        self.comboBox_mod.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                        "color: rgb(0, 0, 0);")
-        self.comboBox_mod.setFont(QFont("幼圆", 13))
+        # self.comboBox_mod.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                                 "color: rgb(0, 0, 0);")
+        self.comboBox_mod.setFont(QFont("幼圆", 12))
         self.comboBox_mod.currentIndexChanged.connect(self.methodchange)
 
         # 模式为2时手动输入商品链接框
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit.setGeometry(QRect(200, 510, 600, 50))
+        self.lineEdit.setGeometry(QRect(200, 385, 600, 50))
         self.lineEdit.setFont(QFont("幼圆", 11))
         self.lineEdit.setPlaceholderText("请输入商品链接")
-        self.lineEdit.setStyleSheet("border:none")
-        self.lineEdit.setReadOnly(True)
+        self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255); border-radius:4px;")
+        self.lineEdit.setHidden(True)
         self.lineEdit.textChanged.connect(self.lineEditChange)
 
         # 秒杀时间选择框
         self.dateTimeEdit = QDateTimeEdit(self)
-        self.dateTimeEdit.setGeometry(QRect(200, 450, 600, 50))
+        self.dateTimeEdit.setGeometry(QRect(200, 510, 600, 50))
         self.dateTimeEdit.setObjectName("dateTimeEdit")
-        self.dateTimeEdit.setStyleSheet("border:none")
-        # self.dateTimeEdit.setFont(QtGui.QFont("", 11))
         self.dateTimeEdit.setAccelerated(True)
         self.dateTimeEdit.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
-        self.dateTimeEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                        "color: rgb(0, 0, 0);")
+        self.dateTimeEdit.setStyleSheet("background: white;"  # combobox背景色
+                                        "border: 1px solid gray;"  # 边框宽度、颜色
+                                        "border-radius: 3px;")
         self.dateTimeEdit.setFont(QFont("幼圆", 14))
         # 设置最小日期时间为当前时间
         l_t = time_func.get_time()
@@ -89,10 +99,10 @@ class UiMainWindow(RoundShadow, QWidget):
         # 按钮
         self.pushButton = QPushButton(self)
         self.pushButton.setGeometry(QRect(200, 580, 600, 60))
-        self.pushButton.setStyleSheet("border-radius:50px")
-        self.pushButton.setStyleSheet("background-color: rgb(0, 0, 0);\n"
-                                      "color: rgb(255, 255, 255);")
-        self.pushButton.setFont(QFont("微软雅黑 Light", 10))
+        self.pushButton.setStyleSheet("background-color: rgb(65, 205, 82);\n"
+                                      "color: rgb(255, 255, 255);"
+                                      "border-radius:10px;")
+        self.pushButton.setFont(QFont("华文中宋", 12))
         self.pushButton.setText("开始秒杀")
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.miaosha)
@@ -117,13 +127,13 @@ class UiMainWindow(RoundShadow, QWidget):
         """购物模式切换"""
         if self.comboBox_mod.currentText() == "自动全选购物车":
             self.method = 0
-            self.lineEdit.setReadOnly(True)
+            self.lineEdit.setHidden(True)
         elif self.comboBox_mod.currentText() == "手动选择商品":
             self.method = 1
-            self.lineEdit.setReadOnly(True)
+            self.lineEdit.setHidden(True)
         elif self.comboBox_mod.currentText() == "手动输入商品链接":
             self.method = 2
-            self.lineEdit.setReadOnly(False)
+            self.lineEdit.setHidden(False)
 
     def datetimechange(self):
         """秒杀时间切换"""
