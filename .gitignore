@@ -1,6 +1,7 @@
 # private Documents
 Doc/
 idea/
+__pycache__/
 test_*
 test_tbServer_time_tkinter.py
 miaosha.py
