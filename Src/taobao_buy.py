@@ -2,19 +2,28 @@ from selenium import webdriver
 import Src.time_func as time_func
 import time
 import datetime
+import logging
 
+# 配置log输出模式
+logging.basicConfig(level=logging.INFO,
+                    filename='record.log',
+                    filemode='a',
+                    format='%(asctime)s - %(filename)s - %(levelname)s: %(message)s')
+logging.FileHandler(filename='record.log', encoding='utf-8')
 
 class Tb():
     """淘宝秒杀"""
-    def __init__(self, set_time, method=0, goods_url=""):
+    def __init__(self, set_time="", method=0, tb_id="tb189084993", goods_url=""):
         self.url = "https://www.taobao.com"  # 淘宝网站
         # 设置Chrome开发者模式
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        self.tb_id = tb_id
         self.browser = webdriver.Chrome(options=options)
         self.goods_url = goods_url
         self.set_time = set_time
         self.method = method
+        self.logger = logging.getLogger()
         self.login()
         self.tb_buy()
 
@@ -27,7 +36,7 @@ class Tb():
         # 淘宝登录后”亲，请登录“元素依然在，但会增加用户名元素，检查用户名已判断是否登录
         while True:
             try:
-                if self.browser.find_element_by_link_text("tb189084993"):
+                if self.browser.find_element_by_link_text(self.tb_id):
                     print("[{}] 登录成功".format(time_func.get_time()))
                     break
                 time.sleep(0.3)
@@ -40,7 +49,7 @@ class Tb():
         # 0:自动全选购物车
         # 1:用户自主选择要购买的商品
         # 2:用户输入宝贝链接
-
+        self.logger.info("开始抢购商品")
         # 自动全选购物车
         if self.method == 0:
             # 打开淘宝购物车
@@ -76,7 +85,7 @@ class Tb():
                 try:
                     self.browser.get(self.goods_url)
                     time.sleep(2)
-                    print("[{}] 请尽快勾选所需物品型号")
+                    print("[{}] 请尽快勾选所需物品型号".format(time_func.get_time()))
                     time.sleep(5)
                     while True:
                         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -84,9 +93,14 @@ class Tb():
                         if (now_time > self.set_time) or (server_time > self.set_time):
                             while True:
                                 try:
-                                    if self.browser.find_element_by_link_text("\"立即购买\""):
-                                        self.browser.find_element_by_link_text("\"立即购买\"").click()
-                                        break
+                                    if self.browser.find_element_by_link_text("立即购买"):
+                                        self.browser.find_element_by_link_text("立即购买").click()
+                                        if self.browser.find_element_by_link_text("提交订单"):
+                                            self.browser.find_element_by_link_text("提交订单").click()
+                                            print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
+                                                time_func.get_datetime()))
+                                            self.logger.info("<---抢购成功!--->商品链接:" + self.goods_url)
+                                            break
                                 except:
                                     pass
                             while True:
@@ -94,7 +108,8 @@ class Tb():
                                     if self.browser.find_element_by_link_text("提交订单"):
                                         self.browser.find_element_by_link_text("提交订单").click()
                                         print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
-                                            time_func.get_time()))
+                                            time_func.get_datetime()))
+                                        self.logger.info("<---抢购成功!--->商品链接:" + self.goods_url)
                                         break
                                 except:
                                     print("[{}] 再次尝试提交订单".format(time_func.get_time()))
@@ -104,29 +119,32 @@ class Tb():
                 print("[{}] 链接非法，请输入合法淘宝网商品链接".format(time_func.get_time()))
 
     def auto_pay(self):
-        """自动结算提交订单函数"""
+        """自动结算"""
         # 比较时间点击结算
         while True:
-            now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             server_time = time_func.get_tb_server_time()
+            now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             if (now_time > self.set_time) or (server_time > self.set_time):
                 while True:
                     try:
-                        # "id=J_Go"无效
-                        # if browser.find_element_by_id("J_Go"):
-                        #     browser.find_element_by_id("J_Go").click()
                         if self.browser.find_element_by_link_text("结 算"):
                             self.browser.find_element_by_link_text("结 算").click()
-                            print("[{}] <---------------结算成功，等待提交订单--------------->".format(time_func.get_time()))
+                            print("[{}][{}] <---------------结算成功，等待提交订单--------------->".format(now_time, server_time))
+                            self.logger.info("商品结算成功!")
+                            self.auto_submit()
                             break
                     except:
                         pass
-                while True:
-                    try:
-                        if self.browser.find_element_by_link_text("提交订单"):
-                            self.browser.find_element_by_link_text("提交订单").click()
-                            print("[{}] <---------------抢购成功，请尽快付款--------------->".format(time_func.get_time()))
-                            break
-                    except:
-                        print("[{}] 再次尝试提交订单".format(time_func.get_time()))
 
+    def auto_submit(self):
+        """自动提交订单"""
+        while True:
+            try:
+                if self.browser.find_element_by_link_text("提交订单"):
+                    self.browser.find_element_by_link_text("提交订单").click()
+                    print("[{}][{}] <---------------抢购成功，请尽快付款--------------->".format(time_func.get_datetime(),
+                                                                                       time_func.get_tb_server_time()))
+                    self.logger.info("<---商品抢购成功!--->")
+                    break
+            except:
+                print("再次尝试提交订单")

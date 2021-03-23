@@ -15,9 +15,20 @@ class UiMainWindow(RoundShadow, QWidget):
     def __init__(self, parent=None):
         self.platform = "taobao"
         self.method = 0
+        self.id = "tb189084993"
         self.goods_url = ""
         super(UiMainWindow, self).__init__(parent)
         self.resize(1000, 700)
+
+        # 淘宝用户名输入
+        self.lineEdit_id = QLineEdit(self)
+        self.lineEdit_id.setObjectName("lineEdit")
+        self.lineEdit_id.setGeometry(QRect(200, 385, 150, 50))
+        self.lineEdit_id.setFont(QFont("幼圆", 11))
+        self.lineEdit_id.setPlaceholderText("请输入用户名")
+        self.lineEdit_id.setStyleSheet("background-color: rgb(255, 255, 255);"
+                                       "border-radius:4px;")
+        self.lineEdit_id.textChanged.connect(self.lineEditChange)
 
         # 购物平台选择框
         self.comboBox_platform = QComboBox(self)
@@ -60,10 +71,11 @@ class UiMainWindow(RoundShadow, QWidget):
         # 模式为2时手动输入商品链接框
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit.setGeometry(QRect(200, 385, 600, 50))
+        self.lineEdit.setGeometry(QRect(355, 385, 445, 50))
         self.lineEdit.setFont(QFont("幼圆", 11))
         self.lineEdit.setPlaceholderText("请输入商品链接")
-        self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255); border-radius:4px;")
+        self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);"
+                                    "border-radius:4px;")
         self.lineEdit.setHidden(True)
         self.lineEdit.textChanged.connect(self.lineEditChange)
 
@@ -104,8 +116,8 @@ class UiMainWindow(RoundShadow, QWidget):
         self.pushButton.setStyleSheet("background-color: rgb(65, 205, 82);\n"
                                       "color: rgb(255, 255, 255);"
                                       "border-radius:10px;")
-        self.pushButton.setFont(QFont("华文中宋", 12))
-        self.pushButton.setText("开始秒杀")
+        self.pushButton.setFont(QFont("华文中宋", 16))
+        self.pushButton.setText("开 始 秒 杀")
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.miaosha)
 
@@ -149,13 +161,14 @@ class UiMainWindow(RoundShadow, QWidget):
         print("当前平台: " + self.platform)
         print("当前模式: " + str(self.method))
         print("秒杀时间: " + self.set_time)
+        print("秒杀时间: " + self.set_time)
         if self.platform == "taobao":
             # 确定平台后关闭窗口，否则占用资源且无法响应
             self.close()
-            taobao_buy.Tb(set_time=self.set_time, method=self.method, goods_url=self.goods_url)
+            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
         elif self.platform == "tianmao":
             self.close()
-            taobao_buy.Tb(set_time=self.set_time, method=self.method, goods_url=self.goods_url)
+            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
         return
 
 
