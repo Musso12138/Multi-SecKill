@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO,
                     filename='record.log',
                     filemode='a',
-                    format='%(asctime)s - %(filename)s - %(levelname)s: %(message)s')
+                    format='%(filename)s - %(levelname)s: %(message)s')
 logging.FileHandler(filename='record.log', encoding='utf-8')
 
 class Tb():
@@ -18,6 +18,9 @@ class Tb():
         # 设置Chrome开发者模式
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        # 设置不加载图片
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        options.add_experimental_option("prefs", prefs)
         self.tb_id = tb_id
         self.browser = webdriver.Chrome(options=options)
         self.goods_url = goods_url
@@ -99,7 +102,7 @@ class Tb():
                                             self.browser.find_element_by_link_text("提交订单").click()
                                             print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
                                                 time_func.get_datetime()))
-                                            self.logger.info("<---抢购成功!--->商品链接:" + self.goods_url)
+                                            self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
                                             break
                                 except:
                                     pass
@@ -109,8 +112,8 @@ class Tb():
                                         self.browser.find_element_by_link_text("提交订单").click()
                                         print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
                                             time_func.get_datetime()))
-                                        self.logger.info("<---抢购成功!--->商品链接:" + self.goods_url)
-                                        break
+                                        self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
+                                        return
                                 except:
                                     print("[{}] 再次尝试提交订单".format(time_func.get_time()))
                 except:
@@ -125,17 +128,19 @@ class Tb():
             server_time = time_func.get_tb_server_time()
             now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
             if (now_time > self.set_time) or (server_time > self.set_time):
+                self.logger.info(now_time + "开始秒杀")
                 while True:
                     try:
                         if self.browser.find_element_by_link_text("结 算"):
                             self.browser.find_element_by_link_text("结 算").click()
                             print("[{}][{}] <---------------结算成功，等待提交订单--------------->".format(now_time, server_time))
-                            self.logger.info("商品结算成功!")
+                            self.logger.info(now_time + "商品结算成功!")
                             self.auto_submit()
                             break
                     except:
                         pass
 
+    # 页面跳转太慢了，此处从结算到提交订单是最大的时间损耗点
     def auto_submit(self):
         """自动提交订单"""
         while True:
@@ -144,7 +149,7 @@ class Tb():
                     self.browser.find_element_by_link_text("提交订单").click()
                     print("[{}][{}] <---------------抢购成功，请尽快付款--------------->".format(time_func.get_datetime(),
                                                                                        time_func.get_tb_server_time()))
-                    self.logger.info("<---商品抢购成功!--->")
-                    break
+                    self.logger.info(time_func.get_datetime() + "<---商品抢购成功!--->")
+                    return
             except:
                 print("再次尝试提交订单")

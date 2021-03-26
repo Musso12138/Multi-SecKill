@@ -121,15 +121,6 @@ class UiMainWindow(RoundShadow, QWidget):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.miaosha)
 
-        # 背景图配置
-        # self.formFrame = QtWidgets.QFrame()
-        # self.formFrame.setGeometry(QtCore.QRect(0, -1, 540, 411))
-        # self.formFrame.setStyleSheet("border-color: rgb(0, 85, 255);\n"
-        #                              "background-image: url(images/nike1.jpg);")
-        # self.formFrame.setObjectName("formFrame")
-        # self.formLayout = QtWidgets.QFormLayout(self.formFrame)
-        # self.formLayout.setObjectName("formLayout")
-
     def platformchange(self):
         """监测购物平台切换"""
         if self.comboBox_platform.currentText() == "淘宝":
@@ -168,7 +159,7 @@ class UiMainWindow(RoundShadow, QWidget):
             taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
         elif self.platform == "tianmao":
             self.close()
-            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
+            taobao_buy.Tm(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
         return
 
 
