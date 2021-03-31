@@ -13,14 +13,14 @@ class UiMainWindow(RoundShadow, QWidget):
     """秒杀主窗口"""
 
     def __init__(self, parent=None):
-        self.platform = "taobao"
-        self.method = 0
-        self.id = "tb189084993"
-        self.goods_url = ""
+        self.platform = "taobao"  # 抢购平台
+        self.method = 0  # 抢购模式，默认为0，自动全选购物车
+        self.id = "tb189084993"  # 平台用户名
+        self.goods_url = ""  # 手动输入商品链接模式下，输入的商品链接
         super(UiMainWindow, self).__init__(parent)
-        self.resize(1000, 700)
+        self.resize(1000, 700)  # 主界面大小
 
-        # 淘宝用户名输入
+        # 淘宝用户名输入框
         self.lineEdit_id = QLineEdit(self)
         self.lineEdit_id.setObjectName("lineEdit")
         self.lineEdit_id.setGeometry(QRect(200, 385, 150, 50))
@@ -33,7 +33,6 @@ class UiMainWindow(RoundShadow, QWidget):
         # 购物平台选择框
         self.comboBox_platform = QComboBox(self)
         self.comboBox_platform.setGeometry(QRect(200, 445, 200, 50))
-        # self.comboBox_platform.setStyleSheet("border-color: rgb(255, 255, 255);")
         self.comboBox_platform.setObjectName("comboBox")
         self.comboBox_platform.setPlaceholderText("请选择购物平台")
         self.comboBox_platform.addItem("淘宝")
@@ -63,8 +62,6 @@ class UiMainWindow(RoundShadow, QWidget):
         self.comboBox_mod.addItem("自动全选购物车")
         self.comboBox_mod.addItem("手动选择商品")
         self.comboBox_mod.addItem("手动输入商品链接")
-        # self.comboBox_mod.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-        #                                 "color: rgb(0, 0, 0);")
         self.comboBox_mod.setFont(QFont("幼圆", 12))
         self.comboBox_mod.currentIndexChanged.connect(self.methodchange)
 
@@ -76,6 +73,7 @@ class UiMainWindow(RoundShadow, QWidget):
         self.lineEdit.setPlaceholderText("请输入商品链接")
         self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);"
                                     "border-radius:4px;")
+        # 默认method为0，所以
         self.lineEdit.setHidden(True)
         self.lineEdit.textChanged.connect(self.lineEditChange)
 
@@ -138,6 +136,7 @@ class UiMainWindow(RoundShadow, QWidget):
             self.lineEdit.setHidden(True)
         elif self.comboBox_mod.currentText() == "手动输入商品链接":
             self.method = 2
+            # 只有method为2时才显示链接输入框
             self.lineEdit.setHidden(False)
 
     def datetimechange(self):
@@ -166,6 +165,5 @@ class UiMainWindow(RoundShadow, QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     t = UiMainWindow()
-    # t = RoundImage('./Asset/new_icons/close.png')
     t.show()
     app.exec_()
