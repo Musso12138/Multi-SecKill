@@ -5,6 +5,7 @@ import sys
 import Src.time_func as time_func
 import Src.taobao_buy as taobao_buy
 import Src.tianmao_buy as tianmao_buy
+import Src.jd_buy as jd_buy
 import threading
 from Src.MyLib.RoundShadowWidget import RoundShadow
 
@@ -34,9 +35,9 @@ class UiMainWindow(RoundShadow, QWidget):
         # 淘宝用户名输入框
         self.lineEdit_id = QLineEdit(self)
         self.lineEdit_id.setObjectName("lineEdit")
-        self.lineEdit_id.setGeometry(QRect(200, 385, 150, 50))
+        self.lineEdit_id.setGeometry(QRect(200, 385, 200, 50))
         self.lineEdit_id.setFont(QFont("幼圆", 11))
-        self.lineEdit_id.setPlaceholderText("请输入用户名")
+        self.lineEdit_id.setPlaceholderText("请输入购物网站用户名")
         self.lineEdit_id.setStyleSheet("background-color: rgb(255, 255, 255);"
                                        "border-radius:4px;")
         self.lineEdit_id.textChanged.connect(self.lineEditIdChange)
@@ -48,6 +49,7 @@ class UiMainWindow(RoundShadow, QWidget):
         self.comboBox_platform.setPlaceholderText("请选择购物平台")
         self.comboBox_platform.addItem("淘宝")
         self.comboBox_platform.addItem("天猫")
+        self.comboBox_platform.addItem("京东")
         # 优化ComboBox样式
         self.comboBox_platform.setStyleSheet("QComboBox{"
                                              "border-color: rgb(158,158,158);"
@@ -106,7 +108,7 @@ class UiMainWindow(RoundShadow, QWidget):
         # 模式为2时手动输入商品链接框
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit.setGeometry(QRect(355, 385, 445, 50))
+        self.lineEdit.setGeometry(QRect(405, 385, 395, 50))
         self.lineEdit.setFont(QFont("幼圆", 11))
         self.lineEdit.setPlaceholderText("请输入商品链接")
         self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);"
@@ -168,6 +170,8 @@ class UiMainWindow(RoundShadow, QWidget):
             self.platform = "taobao"
         elif self.comboBox_platform.currentText() == "天猫":
             self.platform = "tianmao"
+        elif self.comboBox_platform.currentText() == "京东":
+            self.platform = "jingdong"
 
     def methodchange(self):
         """监测购物模式切换"""
@@ -209,7 +213,10 @@ class UiMainWindow(RoundShadow, QWidget):
             taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url, email=self.email)
         elif self.platform == "tianmao":
             self.close()
-            taobao_buy.Tm(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
+            tianmao_buy.Tm(set_time=self.set_time, method=self.method, tm_id=self.id, goods_url=self.goods_url, email=self.email)
+        elif self.platform == "jingdong":
+            self.close()
+            jd_buy.Jd(set_time=self.set_time, method=self.method, jd_id=self.id, goods_url=self.goods_url, email=self.email)
         return
 
 

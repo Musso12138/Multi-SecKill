@@ -4,13 +4,18 @@ from email.header import Header  # 用于构建邮件头
 import Src.time_func as time_func
 
 
+platform_list = {
+    "taobao": "淘宝",
+    "tianmao": "天猫",
+    "jingdong": "京东",
+}
 success_text = "抢购成功，请及时付款完成订单"
-fail_text = "很遗憾，抢购失败"
+fail_text = "抢购失败，感谢您的使用"
 
 
 # 邮件tool
 class SendEmail:
-    def __init__(self, to_addr, text):
+    def __init__(self, to_addr, platform, text):
         """
         :param to_addr: 接收方邮箱
         :param text: 邮件内容
@@ -21,7 +26,7 @@ class SendEmail:
         self.to_addr = to_addr  # 收信方邮箱
         self.smtp_server = "smtp.163.com"  # 发信服务器
         # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
-        self.msg = MIMEText(text, "plain", "utf-8")
+        self.msg = MIMEText(platform + text, "plain", "utf-8")
         # 邮件头信息，分别为发件人、收件人、主题
         self.msg['From'] = Header(self.from_addr)
         self.msg['To'] = Header(self.to_addr)
