@@ -15,8 +15,8 @@ class UiMainWindow(RoundShadow, QWidget):
 
     def __init__(self, parent=None):
         self.email = ""  # 用户收件邮箱
-        self.platform = "taobao"  # 抢购平台
-        self.method = 0  # 抢购模式，默认为0，自动全选购物车
+        self.platform = ""  # 抢购平台
+        self.method = -1  # 抢购模式，默认为0，自动全选购物车
         self.id = "tb189084993"  # 平台用户名
         self.goods_url = ""  # 手动输入商品链接模式下，输入的商品链接
         super(UiMainWindow, self).__init__(parent)
@@ -203,21 +203,29 @@ class UiMainWindow(RoundShadow, QWidget):
         self.goods_url = self.lineEdit.text()
 
     def miaosha(self):
-        print("当前平台: " + self.platform)
-        print("当前模式: " + str(self.method))
-        print("秒杀时间: " + self.set_time)
-        print("秒杀时间: " + self.set_time)
-        if self.platform == "taobao":
-            # 确定平台后关闭窗口，否则占用资源且无法响应
-            self.close()
-            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url, email=self.email)
-        elif self.platform == "tianmao":
-            self.close()
-            tianmao_buy.Tm(set_time=self.set_time, method=self.method, tm_id=self.id, goods_url=self.goods_url, email=self.email)
-        elif self.platform == "jingdong":
-            self.close()
-            jd_buy.Jd(set_time=self.set_time, method=self.method, jd_id=self.id, goods_url=self.goods_url, email=self.email)
-        return
+        if self.platform and self.method != -1:
+            if self.method != 2 or (self.method == 2 and "https:" in self.goods_url):
+                print("当前平台: " + self.platform)
+                print("当前模式: " + str(self.method))
+                print("秒杀时间: " + self.set_time)
+                print("秒杀时间: " + self.set_time)
+                if self.platform == "taobao":
+                    # 确定平台后关闭窗口，否则占用资源且无法响应
+                    self.close()
+                    taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url, email=self.email)
+                elif self.platform == "tianmao":
+                    self.close()
+                    tianmao_buy.Tm(set_time=self.set_time, method=self.method, tm_id=self.id, goods_url=self.goods_url, email=self.email)
+                elif self.platform == "jingdong":
+                    self.close()
+                    jd_buy.Jd(set_time=self.set_time, method=self.method, jd_id=self.id, goods_url=self.goods_url, email=self.email)
+                return
+            else:
+                print("请输入抢购网址")
+                return
+        else:
+            print("请选择购物平台和抢购模式")
+            return
 
 
 if __name__ == '__main__':
