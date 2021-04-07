@@ -13,12 +13,23 @@ class UiMainWindow(RoundShadow, QWidget):
     """秒杀主窗口"""
 
     def __init__(self, parent=None):
+        self.email = ""  # 用户收件邮箱
         self.platform = "taobao"  # 抢购平台
         self.method = 0  # 抢购模式，默认为0，自动全选购物车
         self.id = "tb189084993"  # 平台用户名
         self.goods_url = ""  # 手动输入商品链接模式下，输入的商品链接
         super(UiMainWindow, self).__init__(parent)
         self.resize(1000, 700)  # 主界面大小
+
+        # 反馈邮箱输入框
+        self.lineEdit_email = QLineEdit(self)
+        self.lineEdit_email.setObjectName("lineEdit")
+        self.lineEdit_email.setGeometry(QRect(200, 330, 600, 50))
+        self.lineEdit_email.setFont(QFont("幼圆", 11))
+        self.lineEdit_email.setPlaceholderText("请输入接收邮箱（非必填，用于接收抢购结果通知）")
+        self.lineEdit_email.setStyleSheet("background-color: rgb(255, 255, 255);"
+                                          "border-radius:4px;")
+        self.lineEdit_email.textChanged.connect(self.lineEditEmailChange)
 
         # 淘宝用户名输入框
         self.lineEdit_id = QLineEdit(self)
@@ -28,7 +39,7 @@ class UiMainWindow(RoundShadow, QWidget):
         self.lineEdit_id.setPlaceholderText("请输入用户名")
         self.lineEdit_id.setStyleSheet("background-color: rgb(255, 255, 255);"
                                        "border-radius:4px;")
-        self.lineEdit_id.textChanged.connect(self.lineEditChange)
+        self.lineEdit_id.textChanged.connect(self.lineEditIdChange)
 
         # 购物平台选择框
         self.comboBox_platform = QComboBox(self)
@@ -38,12 +49,25 @@ class UiMainWindow(RoundShadow, QWidget):
         self.comboBox_platform.addItem("淘宝")
         self.comboBox_platform.addItem("天猫")
         # 优化ComboBox样式
-        self.comboBox_platform.setStyleSheet("border-color: rgb(0,0,0);"
-                                             "selection-background-color: rgb(178, 178, 178);"  # 选中项背景色
-                                             "selection-color: rgb(0, 0, 0);"  # 选中项文字颜色
+        self.comboBox_platform.setStyleSheet("QComboBox{"
+                                             "border-color: rgb(158,158,158);"
                                              "background: white;"  # combobox背景色
                                              "border: 1px solid gray;"  # 边框宽度、颜色
-                                             "border-radius: 3px;")
+                                             "border-radius: 3px;}"
+                                             "QComboBox::drop-down{"
+                                             "border: none;}"
+                                             "QComboBox::down-arrow{"
+                                             "image: url(./images/down_arrow.png);}"
+                                             "QComboBox QAbstractItemView::item{"
+                                             "height: 100px;"
+                                             "background-color: rgb(0,0,0);}"
+                                             "QComboBox QAbstractItemView{"
+                                             "selection-background-color: rgb(64, 156, 255);"  # 选中项背景色
+                                             "selection-color: rgb(255, 255, 255);"  # 选中项文字颜色"
+                                             "background: rgb(255,255,255);"  # 下拉框背景色
+                                             "border: 1px solid rgb(158,158,158);"  # 下拉框边框宽度及颜色
+                                             "border-radius: 0px 0px 5px 5px;"
+                                             "outline: 0px;}")  # 去选中项虚线
         self.comboBox_platform.setFont(QFont("幼圆", 12))
         self.comboBox_platform.setAttribute(Qt.WA_TranslucentBackground)
         self.comboBox_platform.setWindowFlags(Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
@@ -52,11 +76,25 @@ class UiMainWindow(RoundShadow, QWidget):
         # 购物模式选择框
         self.comboBox_mod = QComboBox(self)
         self.comboBox_mod.setGeometry(QRect(450, 445, 350, 50))
-        self.comboBox_mod.setStyleSheet("selection-background-color: rgb(178, 178, 178);"  # 选中项背景色
-                                        "selection-color: rgb(0, 0, 0);"  # 选中项文字颜色
+        self.comboBox_mod.setStyleSheet("QComboBox{"
+                                        "border-color: rgb(158,158,158);"
                                         "background: white;"  # combobox背景色
                                         "border: 1px solid gray;"  # 边框宽度、颜色
-                                        "border-radius: 3px;")
+                                        "border-radius: 3px;}"
+                                        "QComboBox::drop-down{"
+                                        "border: none;}"
+                                        "QComboBox::down-arrow{"
+                                        "image: url(./images/down_arrow.png);}"
+                                        "QComboBox QAbstractItemView::item{"
+                                        "height: 100px;"
+                                        "background-color: rgb(0,0,0);}"
+                                        "QComboBox QAbstractItemView{"
+                                        "selection-background-color: rgb(64, 156, 255);"  # 选中项背景色
+                                        "selection-color: rgb(255, 255, 255);"  # 选中项文字颜色"
+                                        "background: rgb(255,255,255);"  # 下拉框背景色
+                                        "border: 1px solid rgb(158,158,158);"  # 下拉框边框宽度及颜色
+                                        "border-radius: 0px 0px 5px 5px;"
+                                        "outline: 0px;}")  # 去选中项虚线
         self.comboBox_mod.setObjectName("comboBox")
         self.comboBox_mod.setPlaceholderText("请选择秒杀模式")
         self.comboBox_mod.addItem("自动全选购物车")
@@ -75,7 +113,7 @@ class UiMainWindow(RoundShadow, QWidget):
                                     "border-radius:4px;")
         # 默认method为0，所以
         self.lineEdit.setHidden(True)
-        self.lineEdit.textChanged.connect(self.lineEditChange)
+        self.lineEdit.textChanged.connect(self.lineEditUrlChange)
 
         # 秒杀时间选择框
         self.dateTimeEdit = QDateTimeEdit(self)
@@ -83,9 +121,15 @@ class UiMainWindow(RoundShadow, QWidget):
         self.dateTimeEdit.setObjectName("dateTimeEdit")
         self.dateTimeEdit.setAccelerated(True)
         self.dateTimeEdit.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
-        self.dateTimeEdit.setStyleSheet("background: white;"  # combobox背景色
+        self.dateTimeEdit.setStyleSheet("QDateTimeEdit{"
+                                        "border-color: rgb(158,158,158);"
+                                        "background: white;"
                                         "border: 1px solid gray;"  # 边框宽度、颜色
-                                        "border-radius: 3px;")
+                                        "border-radius: 3px;}"
+                                        "QDateTimeEdit::up-button{"
+                                        "image: url(./images/datetime_add.png);}"
+                                        "QDateTimeEdit::down-button{"
+                                        "image: url(./images/datetime_reduce.png);}")
         self.dateTimeEdit.setFont(QFont("幼圆", 14))
         # 设置最小日期时间为当前时间
         l_t = time_func.get_time()
@@ -101,8 +145,7 @@ class UiMainWindow(RoundShadow, QWidget):
         else:
             t[4] = (t[4] // 10 + 1) * 10
         self.dateTimeEdit.setDateTime(QDateTime(QDate(t[0], t[1], t[2]),
-                                                       QTime(t[3], t[4], 0)))
-
+                                                QTime(t[3], t[4], 0)))
         self.set_time = self.dateTimeEdit.text()
         self.dateTimeEdit.setCurrentSection(QDateTimeEdit.MinuteSection)
         self.dateTimeEdit.dateTimeChanged.connect(self.datetimechange)
@@ -143,7 +186,15 @@ class UiMainWindow(RoundShadow, QWidget):
         """监测设定秒杀时间切换"""
         self.set_time = self.dateTimeEdit.text()
 
-    def lineEditChange(self):
+    def lineEditEmailChange(self):
+        """监测邮箱输入改变"""
+        self.email = self.lineEdit_email.text()
+
+    def lineEditIdChange(self):
+        """监测用户名输入改变"""
+        self.id = self.lineEdit_id.text()
+
+    def lineEditUrlChange(self):
         """监测商品链接输入改变"""
         self.goods_url = self.lineEdit.text()
 
@@ -155,7 +206,7 @@ class UiMainWindow(RoundShadow, QWidget):
         if self.platform == "taobao":
             # 确定平台后关闭窗口，否则占用资源且无法响应
             self.close()
-            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)
+            taobao_buy.Tb(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url, email=self.email)
         elif self.platform == "tianmao":
             self.close()
             taobao_buy.Tm(set_time=self.set_time, method=self.method, tb_id=self.id, goods_url=self.goods_url)

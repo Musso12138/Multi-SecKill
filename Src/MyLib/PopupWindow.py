@@ -5,7 +5,7 @@ import sys
 from Src.MyLib.RoundShadowWidget import RoundShadow
 
 success_message = "商品抢购成功！"
-fail_message = "很遗憾，商品抢购失败"
+fail_message = "商品抢购失败."
 
 
 class UiMainWindow(RoundShadow, QWidget):
@@ -18,7 +18,7 @@ class UiMainWindow(RoundShadow, QWidget):
 
         # 通知
         self.messageLabel = QLabel(self)
-        self.messageLabel.setGeometry(QRect(100, 110, 250, 50))
+        self.messageLabel.setGeometry(QRect(125, 110, 250, 50))
         self.messageLabel.setStyleSheet("border:none")
         self.messageLabel.setFont(QFont("幼圆", 13))
         self.messageLabel.setText(self.message)
@@ -42,7 +42,7 @@ class UiMainWindow(RoundShadow, QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    t = UiMainWindow(success_message)
+    t = UiMainWindow(fail_message)
     # t = RoundImage('./Asset/new_icons/close.png')
     t.show()
     app.exec_()

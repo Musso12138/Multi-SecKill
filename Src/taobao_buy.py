@@ -4,6 +4,7 @@ import time
 import datetime
 import logging
 import Src.MyLib.PopupWindow as PopupWindow
+import Src.MyLib.SendEmail as SendMail
 
 # 配置log输出模式
 logging.basicConfig(level=logging.INFO,
@@ -14,7 +15,7 @@ logging.FileHandler(filename='record.log', encoding='utf-8')
 
 class Tb():
     """淘宝秒杀"""
-    def __init__(self, set_time="", method=0, tb_id="tb189084993", goods_url=""):
+    def __init__(self, set_time="", method=0, tb_id="tb189084993", goods_url="", email=""):
         self.url = "https://www.taobao.com"  # 淘宝网站
         # 设置Chrome开发者模式
         options = webdriver.ChromeOptions()
@@ -22,12 +23,14 @@ class Tb():
         # 设置不加载图片
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
-        self.tb_id = tb_id
         self.browser = webdriver.Chrome(options=options)
-        self.goods_url = goods_url
-        self.set_time = set_time
-        self.method = method
-        self.logger = logging.getLogger()
+        self.set_time = set_time  # 预设抢购开始时间
+        self.method = method      # 抢购模式
+        self.tb_id = tb_id        # 淘宝用户名
+        self.goods_url = goods_url  # 手动输入商品链接模式下，输入的商品链接
+        if "@" in email:
+            self.email = email    # 用户邮箱，用来接收抢购结果反馈
+        self.logger = logging.getLogger()  # 日志
         self.login()
         self.tb_buy()
 
@@ -105,18 +108,21 @@ class Tb():
                                     # 时间到了便尝试点击立即购买
                                     if self.browser.find_element_by_link_text("立即购买"):
                                         self.browser.find_element_by_link_text("立即购买").click()
-                                        # 若立即购买点击后用户还没有选择好商品型号，则无法进入提交订单页面
-                                        # 通过检查此时页面中有无提交订单，来判断是否选好型号
-                                        # 若检查到提交订单，则点击，并在各处反馈成功信息
-                                        if self.browser.find_element_by_link_text("提交订单"):
-                                            self.browser.find_element_by_link_text("提交订单").click()
-                                            print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
-                                                time_func.get_datetime()))
-                                            # 将成功记录记入日志
-                                            self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
-                                            # 弹窗提示成功
-                                            PopupWindow.UiMainWindow(message=PopupWindow.success_message)
-                                            break
+                                    # 若立即购买点击后用户还没有选择好商品型号，则无法进入提交订单页面
+                                    # 通过检查此时页面中有无提交订单，来判断是否选好型号
+                                    # 若检查到提交订单，则点击，并在各处反馈成功信息
+                                    if self.browser.find_element_by_link_text("提交订单"):
+                                        self.browser.find_element_by_link_text("提交订单").click()
+                                        print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
+                                            time_func.get_datetime()))
+                                        # 将成功记录记入日志
+                                        self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
+                                        # 弹窗提示成功
+                                        PopupWindow.UiMainWindow(message=PopupWindow.success_message)
+                                        # 发邮件提示成功
+                                        if self.email:
+                                            SendMail.SendEmail(self.email, SendMail.success_text)
+                                        break
                                 except:
                                     pass
                             # 防止上方提交订单失败
@@ -131,7 +137,7 @@ class Tb():
                                     except:
                                         print("[{}] 再次尝试提交订单".format(time_func.get_time()))
                                 else:
-                                    break
+                                    return
                 except:
                     print("[{}] 无法打开指定链接".format(time_func.get_time()))
             else:
@@ -143,18 +149,31 @@ class Tb():
         while True:
             server_time = time_func.get_tb_server_time()
             now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            # 如果结算超时，则判定为抢购失败
+            if time_func.time_out(set_time=self.set_time, now_time=now_time):
+                print("[{}][{}] <---------------结算超时，抢购失败--------------->".format(now_time, server_time))
+                # 将超时记录记入日志
+                self.logger.info(now_time + "商品结算超时，抢购失败")
+                # 弹窗失败提示
+                PopupWindow.UiMainWindow(message=PopupWindow.fail_message)
+                if self.email:
+                    SendMail.SendEmail(self.email, SendMail.fail_text)
+                return
+
+            # 如果当前本地时间或服务器时间有一个超过了预设抢购时间，则开始抢购
             if (now_time > self.set_time) or (server_time > self.set_time):
                 self.logger.info(now_time + "开始秒杀")
                 while True:
                     try:
+                        # 在页面内寻找结算元素，若找到则点击
                         if self.browser.find_element_by_link_text("结 算"):
                             self.browser.find_element_by_link_text("结 算").click()
                             print("[{}][{}] <---------------结算成功，等待提交订单--------------->".format(now_time, server_time))
                             # 将结算成功记录记入日志
                             self.logger.info(now_time + "商品结算成功!")
                             # 调用自动提交订单函数
-                            self.auto_submit()
-                            break
+                            if self.auto_submit():
+                                return
                     except:
                         pass
 
@@ -163,12 +182,19 @@ class Tb():
         """自动提交订单"""
         while True:
             try:
+                # 在页面内寻找提交订单元素，若找到则点击
                 if self.browser.find_element_by_link_text("提交订单"):
                     self.browser.find_element_by_link_text("提交订单").click()
+                    # 抢购成功，则打印成功信息
                     print("[{}][{}] <---------------抢购成功，请尽快付款--------------->".format(time_func.get_datetime(),
                                                                                        time_func.get_tb_server_time()))
+                    # 将成功记录记入日志
                     self.logger.info(time_func.get_datetime() + "<---商品抢购成功!--->")
+                    # 弹窗提示成功
                     PopupWindow.UiMainWindow(message=PopupWindow.success_message)
-                    return
+                    # 发邮件提示成功
+                    if self.email:
+                        SendMail.SendEmail(self.email, SendMail.success_text)
+                    return True
             except:
                 print("再次尝试提交订单")
