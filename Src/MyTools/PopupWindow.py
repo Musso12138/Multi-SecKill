@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys
-from Src.MyLib.RoundShadowWidget import RoundShadow
+from Src.MyTools.RoundShadowWidget import RoundShadow
 
 success_message = "商品抢购成功！"
 fail_message = "商品抢购失败."
@@ -44,5 +44,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     t = UiMainWindow(fail_message)
     # t = RoundImage('./Asset/new_icons/close.png')
-    t.show()
+    # t.show()
     app.exec_()

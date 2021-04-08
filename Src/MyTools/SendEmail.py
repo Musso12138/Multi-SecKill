@@ -1,8 +1,6 @@
 import smtplib  # smtplib 用于邮件的发信动作
 from email.mime.text import MIMEText  # email 用于构建邮件内容
 from email.header import Header  # 用于构建邮件头
-import Src.time_func as time_func
-
 
 platform_list = {
     "taobao": "淘宝",

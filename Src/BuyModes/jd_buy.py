@@ -1,17 +1,17 @@
 from selenium import webdriver
-import Src.time_func as time_func
+import Src.MyTools.time_func as time_func
 import time
 import datetime
 import logging
-import Src.MyLib.PopupWindow as PopupWindow
-import Src.MyLib.SendEmail as SendMail
+import Src.MyTools.PopupWindow as PopupWindow
+import Src.MyTools.SendEmail as SendMail
 
 # 配置log输出模式
 logging.basicConfig(level=logging.INFO,
-                    filename='record.log',
+                    filename='../record.log',
                     filemode='a',
                     format='%(filename)s - %(levelname)s: %(message)s')
-logging.FileHandler(filename='record.log', encoding='utf-8')
+logging.FileHandler(filename='../record.log', encoding='utf-8')
 
 class Jd():
     """京东秒杀"""

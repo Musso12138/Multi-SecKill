@@ -2,12 +2,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys
-import Src.time_func as time_func
-import Src.taobao_buy as taobao_buy
-import Src.tianmao_buy as tianmao_buy
-import Src.jd_buy as jd_buy
-import threading
-from Src.MyLib.RoundShadowWidget import RoundShadow
+import Src.MyTools.time_func as time_func
+import Src.BuyModes.taobao_buy as taobao_buy
+import Src.BuyModes.tianmao_buy as tianmao_buy
+import Src.BuyModes.jd_buy as jd_buy
+from Src.MyTools.RoundShadowWidget import RoundShadow
 
 
 class UiMainWindow(RoundShadow, QWidget):
@@ -32,7 +31,7 @@ class UiMainWindow(RoundShadow, QWidget):
                                           "border-radius:4px;")
         self.lineEdit_email.textChanged.connect(self.lineEditEmailChange)
 
-        # 淘宝用户名输入框
+        # 购物平台用户名输入框
         self.lineEdit_id = QLineEdit(self)
         self.lineEdit_id.setObjectName("lineEdit")
         self.lineEdit_id.setGeometry(QRect(200, 385, 200, 50))

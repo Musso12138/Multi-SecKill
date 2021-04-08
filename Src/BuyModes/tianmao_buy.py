@@ -1,17 +1,17 @@
 from selenium import webdriver
-import Src.time_func as time_func
+import Src.MyTools.time_func as time_func
 import time
 import datetime
 import logging
-import Src.MyLib.PopupWindow as PopupWindow
-import Src.MyLib.SendEmail as SendMail
+import Src.MyTools.PopupWindow as PopupWindow
+import Src.MyTools.SendEmail as SendMail
 
 # 配置log输出模式
 logging.basicConfig(level=logging.INFO,
-                    filename='record.log',
+                    filename='../record.log',
                     filemode='a',
                     format='%(filename)s - %(levelname)s: %(message)s')
-logging.FileHandler(filename='record.log', encoding='utf-8')
+logging.FileHandler(filename='../record.log', encoding='utf-8')
 
 class Tm():
     """天猫秒杀"""
@@ -116,7 +116,8 @@ class Tm():
                                         print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
                                             time_func.get_datetime()))
                                         # 将成功记录记入日志
-                                        self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
+                                        self.logger.info(
+                                            time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
                                         # 弹窗提示成功
                                         PopupWindow.UiMainWindow(message=PopupWindow.success_message)
                                         # 发邮件提示成功
@@ -132,7 +133,8 @@ class Tm():
                                         self.browser.find_element_by_link_text("提交订单").click()
                                         print("[{}] <---------------抢购成功，请尽快付款--------------->".format(
                                             time_func.get_datetime()))
-                                        self.logger.info(time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
+                                        self.logger.info(
+                                            time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
                                         return
                                     except:
                                         print("[{}] 再次尝试提交订单".format(time_func.get_time()))
