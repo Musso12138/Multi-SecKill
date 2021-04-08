@@ -1,10 +1,4 @@
-# private Documents
-Doc/
-__pycache__/
-test_*
-test_tbServer_time_tkinter.py
-miaosha.py
-record.log
-/Src/record.log
-/Src/__pycache__/
 /Src/wdnmd.log
+/Src/record.log
+/Doc/
+/Src/MyTools/SmtpPassword.py

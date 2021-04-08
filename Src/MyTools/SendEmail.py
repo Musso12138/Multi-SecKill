@@ -1,6 +1,7 @@
 import smtplib  # smtplib 用于邮件的发信动作
 from email.mime.text import MIMEText  # email 用于构建邮件内容
 from email.header import Header  # 用于构建邮件头
+import Src.MyTools.SmtpPassword as SmtpPassword
 
 platform_list = {
     "taobao": "淘宝",
@@ -19,8 +20,8 @@ class SendEmail:
         :param text: 邮件内容
         """
         # 发送方邮箱
-        self.from_addr = "13122305203@163.com"  # 发信邮箱
-        self.password = "EMRQEFRAHYFVPOPQ"  # 网易邮箱smtp授权码
+        self.from_addr = SmtpPassword.addr  # 发信邮箱
+        self.password = SmtpPassword.password  # 网易邮箱smtp授权码
         self.to_addr = to_addr  # 收信方邮箱
         self.smtp_server = "smtp.163.com"  # 发信服务器
         # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
@@ -41,6 +42,3 @@ class SendEmail:
         # 关闭服务器
         server.quit()
 
-
-if __name__ == "__main__":
-    SendEmail("2020832585@qq.com", success_text)
