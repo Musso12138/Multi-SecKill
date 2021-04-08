@@ -8,10 +8,10 @@ import Src.MyTools.SendEmail as SendMail
 
 # 配置log输出模式
 logging.basicConfig(level=logging.INFO,
-                    filename='../record.log',
+                    filename='./record.log',
                     filemode='a',
                     format='%(filename)s - %(levelname)s: %(message)s')
-logging.FileHandler(filename='../record.log', encoding='utf-8')
+logging.FileHandler(filename='./record.log', encoding='utf-8')
 
 class Jd():
     """京东秒杀"""
@@ -55,7 +55,7 @@ class Jd():
         # 0:自动全选购物车
         # 1:用户自主选择要购买的商品
         # 2:用户输入宝贝链接
-        self.logger.info("开始抢购商品，抢购模式为:" + str(self.method) + "设定时间为:" + self.set_time)
+        self.logger.info("开始抢购商品，抢购模式为:" + str(self.method) + "，设定时间为:" + self.set_time)
         # 自动全选购物车
         if self.method == 0:
             # 打开京东购物车

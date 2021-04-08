@@ -6,14 +6,18 @@ import logging
 import Src.MyTools.PopupWindow as PopupWindow
 import Src.MyTools.SendEmail as SendMail
 
+from PyQt5.QtWidgets import *
+import sys
+
 # 配置log输出模式
 logging.basicConfig(level=logging.INFO,
-                    filename='../record.log',
+                    filename='./record.log',
                     filemode='a',
                     format='%(filename)s - %(levelname)s: %(message)s')
-logging.FileHandler(filename='../record.log', encoding='utf-8')
+logging.FileHandler(filename='./record.log', encoding='utf-8')
 
-class Tb():
+
+class Tb:
     """淘宝秒杀"""
     def __init__(self, set_time="", method=0, tb_id="tb189084993", goods_url="", email=""):
         self.url = "https://www.taobao.com"  # 淘宝网站
@@ -55,7 +59,7 @@ class Tb():
         # 0:自动全选购物车
         # 1:用户自主选择要购买的商品
         # 2:用户输入宝贝链接
-        self.logger.info("开始抢购商品，抢购模式为:" + str(self.method) + "设定时间为:" + self.set_time)
+        self.logger.info("开始抢购商品，抢购模式为:" + str(self.method) + "，设定时间为:" + self.set_time)
         # 自动全选购物车
         if self.method == 0:
             # 打开淘宝购物车
@@ -200,3 +204,8 @@ class Tb():
                     return True
             except:
                 print("再次尝试提交订单")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    t = PopupWindow.UiMainWindow(message=PopupWindow.fail_message)
+    app.exec_()

@@ -34,10 +34,12 @@ class UiMainWindow(RoundShadow, QWidget):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.close_popupwindow)
 
+        self.app = QApplication(sys.argv)
         self.show()
 
     def close_popupwindow(self):
         self.close()
+        self.app.exec_()
 
 
 if __name__ == '__main__':

@@ -4,5 +4,7 @@ __pycache__/
 test_*
 test_tbServer_time_tkinter.py
 miaosha.py
+record.log
 /Src/record.log
 /Src/__pycache__/
+/Src/wdnmd.log
