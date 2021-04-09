@@ -71,6 +71,7 @@ class Tb:
                     # 找到全选按钮并点击
                     if self.browser.find_element_by_id("J_SelectAll1"):
                         self.browser.find_element_by_id("J_SelectAll1").click()
+                        time.sleep(0.5)
                         break
                 except:
                     pass
@@ -106,6 +107,15 @@ class Tb:
                         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
                         # server_time为利用request从淘宝服务器返回的包头获取到的服务器时间，精确到秒
                         server_time = time_func.get_tb_server_time()
+                        # 如果结算超时，则判定为抢购失败
+                        if time_func.time_out(set_time=self.set_time, now_time=now_time):
+                            print("[{}][{}] <---------------结算超时，抢购失败--------------->".format(now_time, server_time))
+                            # 将超时记录记入日志
+                            self.logger.info(now_time + "商品结算超时，抢购失败")
+                            if self.email:
+                                SendMail.SendEmail(self.email, SendMail.platform_list["taobao"], SendMail.fail_text)
+                            return
+
                         if (now_time > self.set_time) or (server_time > self.set_time):
                             while True:
                                 try:
@@ -122,8 +132,6 @@ class Tb:
                                         # 将成功记录记入日志
                                         self.logger.info(
                                             time_func.get_datetime() + "<---抢购成功!--->商品链接:" + self.goods_url)
-                                        # 弹窗提示成功
-                                        PopupWindow.UiMainWindow(message=PopupWindow.success_message)
                                         # 发邮件提示成功
                                         if self.email:
                                             SendMail.SendEmail(self.email, SendMail.platform_list["taobao"], SendMail.success_text)
@@ -160,8 +168,6 @@ class Tb:
                 print("[{}][{}] <---------------结算超时，抢购失败--------------->".format(now_time, server_time))
                 # 将超时记录记入日志
                 self.logger.info(now_time + "商品结算超时，抢购失败")
-                # 弹窗失败提示
-                PopupWindow.UiMainWindow(message=PopupWindow.fail_message)
                 if self.email:
                     SendMail.SendEmail(self.email, SendMail.platform_list["taobao"], SendMail.fail_text)
                 return
@@ -196,16 +202,14 @@ class Tb:
                                                                                        time_func.get_tb_server_time()))
                     # 将成功记录记入日志
                     self.logger.info(time_func.get_datetime() + "<---商品抢购成功!--->")
-                    # 弹窗提示成功
-                    PopupWindow.UiMainWindow(message=PopupWindow.success_message)
                     # 发邮件提示成功
                     if self.email:
                         SendMail.SendEmail(self.email, SendMail.platform_list["taobao"], SendMail.success_text)
                     return True
             except:
-                print("再次尝试提交订单")
+                pass
+                # print("再次尝试提交订单")
+
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
     t = PopupWindow.UiMainWindow(message=PopupWindow.fail_message)
-    app.exec_()

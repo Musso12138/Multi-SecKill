@@ -119,8 +119,6 @@ class Jd():
                 print("[{}][{}] <---------------结算超时，抢购失败--------------->".format(now_time, server_time))
                 # 将超时记录记入日志
                 self.logger.info(now_time + "商品结算超时，抢购失败")
-                # 弹窗失败提示
-                PopupWindow.UiMainWindow(message=PopupWindow.fail_message)
                 if self.email:
                     SendMail.SendEmail(self.email, SendMail.platform_list["jingdong"], SendMail.fail_text)
                 return
@@ -155,8 +153,6 @@ class Jd():
                                                                                        time_func.get_tb_server_time()))
                     # 将成功记录记入日志
                     self.logger.info(time_func.get_datetime() + "<---商品抢购成功!--->")
-                    # 弹窗提示成功
-                    PopupWindow.UiMainWindow(message=PopupWindow.success_message)
                     # 发邮件提示成功
                     if self.email:
                         SendMail.SendEmail(self.email, SendMail.platform_list["jingdong"], SendMail.success_text)

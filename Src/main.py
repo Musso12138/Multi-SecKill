@@ -99,7 +99,7 @@ class UiMainWindow(RoundShadow, QWidget):
         self.comboBox_mod.setObjectName("comboBox")
         self.comboBox_mod.setPlaceholderText("请选择秒杀模式")
         self.comboBox_mod.addItem("自动全选购物车")
-        self.comboBox_mod.addItem("手动选择商品")
+        self.comboBox_mod.addItem("手动选择购物车内商品")
         self.comboBox_mod.addItem("手动输入商品链接")
         self.comboBox_mod.setFont(QFont("幼圆", 12))
         self.comboBox_mod.currentIndexChanged.connect(self.methodchange)
@@ -177,7 +177,7 @@ class UiMainWindow(RoundShadow, QWidget):
         if self.comboBox_mod.currentText() == "自动全选购物车":
             self.method = 0
             self.lineEdit.setHidden(True)
-        elif self.comboBox_mod.currentText() == "手动选择商品":
+        elif self.comboBox_mod.currentText() == "手动选择购物车内商品":
             self.method = 1
             self.lineEdit.setHidden(True)
         elif self.comboBox_mod.currentText() == "手动输入商品链接":

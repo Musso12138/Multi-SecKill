@@ -42,3 +42,6 @@ class SendEmail:
         # 关闭服务器
         server.quit()
 
+
+if __name__ == '__main__':
+    t = SendEmail("2020832585@qq.com", "淘宝", fail_text)
